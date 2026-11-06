@@ -172,6 +172,31 @@
     }
     .zoom img { max-height: 92vh; max-width: 100%; border-radius: 16px; }
 
+    /* The tutorial video: a card on the first visit, a full-screen player. */
+    .tut {
+      display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px 14px; align-items: center;
+      margin: 14px 0 0; padding: 12px; border-radius: 16px; background: var(--brand-soft);
+    }
+    .tut-play { position: relative; grid-row: span 2; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 12px; overflow: hidden; width: 96px; height: 120px; }
+    .tut-play img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .tut-play span {
+      position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.92); color: var(--brand); font-size: 16px; display: flex; align-items: center; justify-content: center;
+    }
+    .tut-text b { display: block; font-size: 15px; line-height: 1.3; }
+    .tut-text span { display: block; font-size: 13px; color: var(--muted); }
+    .tut-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tut-actions button, .player-skip {
+      border: 0; border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+    }
+    .tut-watch { background: var(--brand); color: #fff; }
+    .tut-skip { background: #fff; color: var(--muted); }
+    .player {
+      position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+      background: rgba(15, 17, 32, 0.94); padding: 56px 12px 16px;
+    }
+    .player video { display: block; max-width: 100%; max-height: 100%; border-radius: 14px; background: #000; }
+    .player-skip { position: absolute; top: 12px; right: 12px; background: #fff; color: var(--ink); }
     @media (min-width: 640px) {
       .hero img { width: 112px; height: 112px; border-radius: 26px; }
       .hero h1 { font-size: 32px; }
@@ -224,6 +249,14 @@
       </a>
       <p class="under" id="under" data-t="under">Para sa Android 5.0 pataas</p>
       <p class="started" id="started" hidden data-t="started">Nagsimula na ang download. Kapag tapos na, buksan ang file para i-install — tingnan ang mga hakbang sa ibaba.</p>
+      <div class="tut" id="tut" hidden>
+        <button type="button" class="tut-play" id="tutPlay" aria-label="Panoorin"><img src="assets/tutorial.jpg" alt=""><span aria-hidden="true">▶</span></button>
+        <div class="tut-text"><b data-t="tutTitle">Panoorin kung paano i‑install at i‑update</b><span data-t="tutLen">Wala pang 1 minuto · may boses</span></div>
+        <div class="tut-actions">
+          <button type="button" class="tut-watch" id="tutWatch" data-t="tutWatch">▶ Panoorin</button>
+          <button type="button" class="tut-skip" id="tutSkip" data-t="tutSkip">Laktawan</button>
+        </div>
+      </div>
     </div>
 
     <div id="ios" class="ios" hidden data-t="ios">
@@ -274,6 +307,7 @@
         <li><span data-t="s3">Kapag itinanong, payagan ang "Install unknown apps" para sa browser mo, saka bumalik.</span></li>
         <li><span data-t="s4">Pindutin ang Install. Tapos na — buksan ang E-Tarabay!</span></li>
       </ol>
+      <p><button type="button" class="more" id="tutAgain" data-t="tutLink">▶ Panoorin ang video tutorial</button></p>
       <p class="tip" data-t="tipUpdate"><strong>Pag-update:</strong> pareho lang ang mga hakbang. Hindi nawawala ang stars, awards at progress ng bata.</p>
       <p class="tip" data-t="tipOld"><strong>Kung v1.2.48 o mas luma ang nasa phone:</strong> i-uninstall muna ang lumang E-Tarabay bago i-install ito. Babalik ang stars, awards at progress pagka-sign in ulit.</p>
     </section>
@@ -297,6 +331,12 @@
   </footer>
 
   <div class="zoom" id="zoom" hidden><img alt=""></div>
+  <div class="player" id="player" hidden role="dialog" aria-label="Video tutorial">
+    <video id="tutVideo" playsinline controls preload="none" poster="assets/tutorial.jpg">
+      <source src="assets/tutorial.mp4" type="video/mp4">
+    </video>
+    <button type="button" class="player-skip" id="playerSkip" data-t="tutSkip">Laktawan</button>
+  </div>
 
   <script>
     (function () {
@@ -329,6 +369,9 @@
           s3: 'Kapag itinanong, payagan ang "Install unknown apps" para sa browser mo, saka bumalik.',
           s4: 'Pindutin ang Install. Tapos na — buksan ang E-Tarabay!',
           tipUpdate: '<strong>Pag-update:</strong> pareho lang ang mga hakbang. Hindi nawawala ang stars, awards at progress ng bata.',
+          tutTitle: 'Panoorin kung paano i‑install at i‑update',
+          tutLen: 'Wala pang 1 minuto · may boses',
+          tutWatch: '▶ Panoorin', tutSkip: 'Laktawan', tutLink: '▶ Panoorin ang video tutorial',
           tipOld: '<strong>Kung v1.2.48 o mas luma ang nasa phone:</strong> i-uninstall muna ang lumang E-Tarabay bago i-install ito. Babalik ang stars, awards at progress pagka-sign in ulit.',
           infoH: 'Impormasyon', iVersion: 'Bersyon', iUpdated: 'Na-update', iSize: 'Laki ng download',
           iNeeds: 'Kailangan', iNeedsVal: 'Android 5.0 pataas', iLangs: 'Mga wika',
@@ -362,6 +405,9 @@
           s3: 'If asked, allow "Install unknown apps" for your browser, then go back.',
           s4: 'Tap Install. Done — open E-Tarabay!',
           tipUpdate: "<strong>Updating:</strong> the same steps. The child's stars, awards and progress stay.",
+          tutTitle: 'Watch how to install and update',
+          tutLen: 'Under 1 minute · narrated in Filipino',
+          tutWatch: '▶ Watch', tutSkip: 'Skip', tutLink: '▶ Watch the video tutorial',
           tipOld: '<strong>If the phone has v1.2.48 or older:</strong> uninstall the old E-Tarabay first, then install this one. Stars, awards and progress come back when you sign in.',
           infoH: 'Information', iVersion: 'Version', iUpdated: 'Updated', iSize: 'Download size',
           iNeeds: 'Requires', iNeedsVal: 'Android 5.0 and up', iLangs: 'Languages',
@@ -496,6 +542,39 @@
       zoom.addEventListener('click', function () { zoom.hidden = true; });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') zoom.hidden = true;
+      });
+
+      // The tutorial: offered once on a phone's first visit. Sound needs a
+      // tap, so it only ever starts from one. Skipping or finishing it
+      // means it is not offered again; the link under the steps still is.
+      var TUT_KEY = 'etarabay-tutorial';
+      var tut = $('tut'), player = $('player'), tutVideo = $('tutVideo');
+      var seen = false;
+      try { seen = localStorage.getItem(TUT_KEY) === 'seen'; } catch (e) { /* fine */ }
+      tut.hidden = seen;
+      function markSeen() {
+        tut.hidden = true;
+        try { localStorage.setItem(TUT_KEY, 'seen'); } catch (e) { /* fine */ }
+      }
+      function openPlayer() {
+        player.hidden = false;
+        try { tutVideo.currentTime = 0; } catch (e) { /* not loaded yet */ }
+        var playing = tutVideo.play();
+        if (playing && playing.catch) playing.catch(function () { /* the controls stay */ });
+      }
+      function closePlayer() {
+        tutVideo.pause();
+        player.hidden = true;
+        markSeen();
+      }
+      $('tutPlay').addEventListener('click', openPlayer);
+      $('tutWatch').addEventListener('click', openPlayer);
+      $('tutAgain').addEventListener('click', openPlayer);
+      $('tutSkip').addEventListener('click', markSeen);
+      $('playerSkip').addEventListener('click', closePlayer);
+      tutVideo.addEventListener('ended', closePlayer);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !player.hidden) closePlayer();
       });
 
       // iPadOS reports itself as a Mac; a Mac has no touch screen.
